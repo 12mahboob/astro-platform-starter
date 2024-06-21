@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -41,13 +40,8 @@
         }
 
         @keyframes rotateOuter {
-            from {
-                transform: rotate(0deg);
-            }
-
-            to {
-                transform: rotate(360deg);
-            }
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         .inner-circle {
@@ -61,13 +55,8 @@
         }
 
         @keyframes rotateinner {
-            from {
-                transform: rotate(360deg);
-            }
-
-            to {
-                transform: rotate(0deg);
-            }
+            from { transform: rotate(360deg); }
+            to { transform: rotate(0deg); }
         }
 
         .search-container {
@@ -79,7 +68,7 @@
             align-items: center;
             background-color: #e913d7;
             padding: 1vh;
-            box-shadow: 0 -0.2vh 0.5vh rgba(0, 0, 0, 0.1);
+            box-shadow: 0 -0.2vh 0.5vh rgba(0,0,0,0.1);
         }
 
         .search-bar {
@@ -110,8 +99,7 @@
             align-items: flex-start;
         }
 
-        .question,
-        .answer {
+        .question, .answer {
             padding: 1vh;
             border-radius: 1vh;
             margin-top: 1vh;
@@ -183,7 +171,6 @@
         }
     </style>
 </head>
-
 <body>
     <div class="outer-circle-container">
         <div class="outer-circle">
@@ -197,7 +184,7 @@
 
     <div class="search-container">
         <input type="text" class="search-bar" id="search-bar" placeholder="Search..." disabled>
-        <button class="search-button" onclick="handleSearch()" disabled>🔎</button>
+        <button class="search-button" onclick="handleSearch()" disabled>🔍🔎</button>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.2/gsap.min.js"></script>
@@ -275,11 +262,11 @@
                     // Scroll to the bottom to show the latest question and answer
                     setTimeout(() => {
                         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-                    }, 500);
-                }, 2000);
-            };
+                        }, 500);
+                    }, 2000);
+                });
+            }
         }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }
 
         // GSAP Animations for initial load
         gsap.fromTo(".outer-circle", { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 1 });
@@ -294,5 +281,4 @@
         }, 1500);
     </script>
 </body>
-
 </html>
