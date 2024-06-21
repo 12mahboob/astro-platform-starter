@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>donkeychat.ai</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(to right, #ff9a9e, #fad0c4, #fad0c4);
+            margin: 0;
+            font-family: Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .outer-circle-container {
+            display: flex;
+            justify-content: center;
+            width: 100vw;
+            height: 40vh;
+            margin-top: 5vh;
+        }
+
+        .outer-circle {
+            width: 14vw;
+            height: 14vw;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            border-right: .5vw double red;
+            border-bottom: .5vw double rgb(62, 25, 165);
+            border-top: .5vw double rgb(241, 17, 204);
+            border-left: .5vw double rgb(255, 217, 0);
+            animation: rotateOuter 5s linear infinite;
+        }
+
+        @keyframes rotateOuter {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .inner-circle {
+            width: 12vw;
+            height: 12vw;
+            border-radius: 50%;
+            background-image: url('https://images.unsplash.com/photo-1530006469076-8bddf587ab8c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDJ8fGRvbmtleXxlbnwwfHx8fDE2NjkyMTMyNzI&ixlib=rb-1.2.1&q=80&w=400');
+            background-size: cover;
+            border: 0.5vw solid #4CAF50;
+            animation: rotateinner 5s linear infinite;
+        }
+
+        @keyframes rotateinner {
+            from {
+                transform: rotate(360deg);
+            }
+
+            to {
+                transform: rotate(0deg);
+            }
+        }
+
+        .search-container {
+            position: fixed;
+            bottom: 0;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #e913d7;
+            padding: 1vh;
+            box-shadow: 0 -0.2vh 0.5vh rgba(0, 0, 0, 0.1);
+        }
+
+        .search-bar {
+            padding: 1vh;
+            width: 60vw;
+            max-width: 400px;
+            border: 0.2vh solid #e913d7;
+            border-radius: 2vh 0 0 2vh;
+            outline: none;
+        }
+
+        .search-button {
+            padding: 1vh;
+            border: none;
+            background-color: #0c1b0d;
+            color: white;
+            border-radius: 0 2vh 2vh 0;
+            cursor: pointer;
+        }
+
+        .response-container {
+            width: 90vw;
+            max-width: 600px;
+            margin-top: 2vh;
+            margin-bottom: 10vh;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .question,
+        .answer {
+            padding: 1vh;
+            border-radius: 1vh;
+            margin-top: 1vh;
+            max-width: 100%;
+            word-wrap: break-word;
+        }
+
+        .question {
+            background-color: #d1c4e9;
+            opacity: 0;
+        }
+
+        .answer {
+            background-color: #bbdefb;
+            align-self: flex-end;
+            opacity: 0;
+        }
+
+        .processing {
+            display: none;
+            font-size: 3em;
+            color: #af4f4c;
+            position: fixed;
+            top: 65%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .outer-circle {
+                width: 28vw;
+                height: 28vw;
+            }
+
+            .inner-circle {
+                width: 24vw;
+                height: 24vw;
+            }
+
+            .search-bar {
+                width: 70vw;
+            }
+
+            .processing {
+                font-size: 2em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .outer-circle {
+                width: 40vw;
+                height: 40vw;
+            }
+
+            .inner-circle {
+                width: 34vw;
+                height: 34vw;
+            }
+
+            .search-bar {
+                width: 75vw;
+            }
+
+            .processing {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="outer-circle-container">
+        <div class="outer-circle">
+            <div class="inner-circle"></div>
+        </div>
+    </div>
+
+    <div class="processing" id="processing">Processing.......</div>
+
+    <div class="response-container" id="response-container"></div>
+
+    <div class="search-container">
+        <input type="text" class="search-bar" id="search-bar" placeholder="Search..." disabled>
+        <button class="search-button" onclick="handleSearch()" disabled>🔎</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.2/gsap.min.js"></script>
+    <script>
+        const responses = {
+            "Hello": "ہیلو! کیا حال چال ہیں؟",
+            "How are you?": "میں تو روبوٹ ہوں، جذبات نہیں ہوتے میرے!",
+            "What's your name?": "میرا نام چیٹ جی پی ٹی ہے، گدھا جیسا۔",
+            "What do you do?": "میں آپ کی مدد کرتا ہوں اور کبھی کبھی خود بھی ہنس لیتا ہوں۔",
+            "Where are you from?": "میں ڈیجیٹل دنیا سے آیا ہوں، قریب ہی کہیں۔",
+            "Tell me a joke": "ایک گدھا دوسرے سے کہتا ہے، 'بھائی، آج ہنسنے کا دل نہیں کر رہا!' دوسرا کہتا ہے، 'کوئی بات نہیں، پھر بھی ہنس دو!'",
+            "What's the weather?": "میں موسم کی پیش گوئی نہیں کر سکتا، مگر یہاں ہمیشہ ڈیجیٹل دھوپ ہے۔",
+            "What's the time?": "مجھے وقت کا پتہ نہیں، معاف کرنا۔",
+            "How old are you?": "میری عمر ڈیجیٹل ہے، ہمیشہ جوان!",
+            "What is AI?": "AI یعنی مصنوعی ذہانت، جیسے گدھا سمجھدار ہو جائے!"
+        };
+
+        let questionCount = 0;
+
+        function handleSearch() {
+            const searchBar = document.getElementById('search-bar');
+            const searchButton = document.querySelector('.search-button');
+            const processing = document.getElementById('processing');
+            const questionText = searchBar.value.trim();
+            const responseContainer = document.getElementById('response-container');
+
+            if (questionText) {
+                questionCount++;
+                const questionBox = document.createElement('div');
+                questionBox.className = 'question';
+                questionBox.innerText = questionText;
+
+                const answerBox = document.createElement('div');
+                answerBox.className = 'answer';
+                const responseKeys = Object.keys(responses);
+                let answerText = 'مجھے سوال سمجھ نہیں آیا۔';
+                if (questionCount <= 10 && responseKeys.length >= questionCount) {
+                    answerText = responses[responseKeys[questionCount - 1]];
+                }
+
+                responseContainer.appendChild(questionBox);
+                responseContainer.appendChild(answerBox);
+
+                searchBar.value = '';
+                searchBar.disabled = true;
+                searchButton.disabled = true;
+
+                // Animate the question box
+                gsap.fromTo(questionBox, { opacity: 0, x: -100 }, { opacity: 1, x: 0, duration: 1 });
+
+                // Show the processing animation
+                processing.style.display = 'block';
+
+                setTimeout(() => {
+                    // Hide the processing animation
+                    processing.style.display = 'none';
+
+                    // Animate the answer box character by character
+                    let currentText = "";
+                    let index = 0;
+
+                    const interval = setInterval(() => {
+                        currentText += answerText[index];
+                        answerBox.innerText = currentText;
+                        index++;
+                        if (index >= answerText.length) {
+                            clearInterval(interval);
+                            searchBar.disabled = false;
+                            searchButton.disabled = false;
+                        }
+                    }, 50);
+
+                    gsap.fromTo(answerBox, { opacity: 0, x: 100 }, { opacity: 1, x: 0, duration: 1 });
+
+                    // Scroll to the bottom to show the latest question and answer
+                    setTimeout(() => {
+                        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                    }, 500);
+                }, 2000);
+            };
+        }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }
+
+        // GSAP Animations for initial load
+        gsap.fromTo(".outer-circle", { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 1 });
+        gsap.fromTo(".inner-circle", { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 1, delay: 0.5 });
+        gsap.fromTo("body", { backgroundPosition: "0% 0%" }, { backgroundPosition: "100% 100%", duration: 5, ease: "none", repeat: -1, yoyo: true });
+        gsap.fromTo(".search-container", { opacity: 0, y: 100 }, { opacity: 1, y: 0, duration: 1, delay: 1 });
+
+        // Enable the search bar and button after the initial animations
+        setTimeout(() => {
+            document.getElementById('search-bar').disabled = false;
+            document.querySelector('.search-button').disabled = false;
+        }, 1500);
+    </script>
+</body>
+
+</html>
